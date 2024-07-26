@@ -1,6 +1,6 @@
 export default function Pagination({ children, handleClick }) {
   return (
-    <div className="flex mx-auto justify-center gap-8 mt-8">
+    <div className="flex mx-auto justify-center gap-8">
       <button
         onClick={() => {
           handleClick("prev");

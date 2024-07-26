@@ -2,6 +2,7 @@ import PokeCard from "./components/PokeCard";
 import Pagination from "./components/Pagination";
 import { useEffect, useRef, useState } from "react";
 import SearchBar from "./components/SearchBar";
+import NavBar from "./components/NavBar";
 function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [info, setInfo] = useState({});
@@ -49,13 +50,13 @@ function App() {
   function handleClick(direction) {
     setCurrentIndex((prevIndex) => {
       let newIndex = prevIndex;
-      if (direction === "next" && prevIndex < MAX_NUM) {
-        newIndex = prevIndex + 1;
-      } else if (direction === "prev" && prevIndex > 1) {
-        newIndex = prevIndex - 1;
+      if (direction === "next") {
+        newIndex = (prevIndex + 1) % MAX_NUM;
+      } else if (direction === "prev") {
+        newIndex = (prevIndex - 1 + MAX_NUM) % MAX_NUM;
       }
       if (newIndex !== prevIndex) {
-        getData(newIndex);
+        getData(pokeList[newIndex]);
       }
       return newIndex;
     });
@@ -74,7 +75,6 @@ function App() {
       let pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${query}`);
 
       let pokemonJSON = await pokemon.json();
-      // console.log(pokemonJSON);
 
       const [ability, move, species, type] = await Promise.all([
         fetch(pokemonJSON.abilities[0].ability.url).then((res) => res.json()),
@@ -102,8 +102,7 @@ function App() {
       species_desc = species_desc === undefined ? "N/A" : species_desc;
 
       let color = species.color.name;
-      color = species_desc === undefined ? "N/A" : species_desc;
-
+      color = color === undefined ? "N/A" : color;
       let double_damage = type.damage_relations.double_damage_from[0];
       double_damage = double_damage === undefined ? "N/A" : double_damage.name;
 
@@ -120,7 +119,7 @@ function App() {
         weight: pokemonJSON.weight,
         ability_name: pokemonJSON.abilities[0].ability.name,
         ability_desc: myAbility.effect,
-        move_name: pokemonJSON.moves[0].move.name,
+        move_name: pokemonJSON.moves[pokemonJSON.moves.length - 1].move.name,
         move_desc: myMove.effect,
         move_power: move.power,
         species_desc: species_desc,
@@ -135,6 +134,7 @@ function App() {
 
   return (
     <>
+      <NavBar></NavBar>
       <SearchBar handleSubmit={handleSubmit} />
       <PokeCard info={info} />
       <Pagination handleClick={handleClick} />
