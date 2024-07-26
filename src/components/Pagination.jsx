@@ -9,7 +9,6 @@ export default function Pagination({ children, handleClick }) {
       >
         Prev
       </button>
-      {children}
       <button
         onClick={() => {
           handleClick("next");

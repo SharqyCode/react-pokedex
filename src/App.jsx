@@ -43,106 +43,101 @@ function App() {
   useEffect(() => {
     // getData(offsetRef.current, true);
     getList();
-    // getData(0, true);
+    getData(1); // Can we make this more dynamic?
   }, []);
 
   function handleClick(direction) {
-    if (direction == "next" && offsetRef.current < MAX_NUM) {
-      // offsetRef.current = offsetRef.current + 1;
-      // getData(offsetRef.current, true);
-    } else if (direction == "prev" && offsetRef.current > 0) {
-      // offsetRef.current = offsetRef.current - 1;
-      // getData(offsetRef.current, true);
-    }
+    setCurrentIndex((prevIndex) => {
+      let newIndex = prevIndex;
+      if (direction === "next" && prevIndex < MAX_NUM) {
+        newIndex = prevIndex + 1;
+      } else if (direction === "prev" && prevIndex > 1) {
+        newIndex = prevIndex - 1;
+      }
+      if (newIndex !== prevIndex) {
+        getData(newIndex);
+      }
+      return newIndex;
+    });
   }
 
   function handleSubmit(text) {
-    // TODO: Fetch data using pokemon name
-    // getData(text, false);
+    const newIndex = isNaN(text) ? nameIndex[text] : idIndex[text];
+    if (newIndex !== currentIndex) {
+      setCurrentIndex(newIndex);
+      getData(text);
+    }
   }
 
-  // async function getData(query, offsetBool) {
-  //   try {
-  //     let pokemon;
-  //     if (offsetBool) {
-  //       let response = await fetch(
-  //         `https://pokeapi.co/api/v2/pokemon/?limit=1&offset=${query}`
-  //       );
+  async function getData(query) {
+    try {
+      let pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${query}`);
 
-  //       let json = await response.json();
-  //       pokemon = await fetch(json.results[0].url);
-  //     } else {
-  //       pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${query}`);
-  //     }
-  //     let pokemonJSON = await pokemon.json();
-  //     // console.log(pokemonJSON);
+      let pokemonJSON = await pokemon.json();
+      // console.log(pokemonJSON);
 
-  //     let ability = await fetch(pokemonJSON.abilities[0].ability.url);
-  //     let abilityJSON = await ability.json();
-  //     // console.log(abilityJSON);
+      const [ability, move, species, type] = await Promise.all([
+        fetch(pokemonJSON.abilities[0].ability.url).then((res) => res.json()),
+        fetch(pokemonJSON.moves[0].move.url).then((res) => res.json()),
+        fetch(pokemonJSON.species.url).then((res) => res.json()),
+        fetch(pokemonJSON.types[0].type.url).then((res) => res.json()),
+      ]);
 
-  //     let myAbility = abilityJSON["effect_entries"].filter(
-  //       (entry) => entry.language.name === "en"
-  //     )[0];
+      let myAbility = ability["effect_entries"].find(
+        (entry) => entry.language.name === "en"
+      );
+      myAbility = myAbility === undefined ? "N/A" : myAbility;
 
-  //     let move = await fetch(pokemonJSON.moves[0].move.url);
-  //     let moveJSON = await move.json();
-  //     // console.log(moveJSON);
+      let myMove = move["effect_entries"].find(
+        (entry) => entry.language.name === "en"
+      );
+      myMove = myMove === undefined ? "N/A" : myMove;
 
-  //     let myMove = moveJSON["effect_entries"].filter(
-  //       (entry) => entry.language.name === "en"
-  //     )[0];
+      let mySpecies = species["flavor_text_entries"].find(
+        (entry) => entry.language.name === "en"
+      );
+      mySpecies = mySpecies === undefined ? "N/A" : mySpecies;
 
-  //     let species = await fetch(pokemonJSON.species.url);
-  //     let speciesJSON = await species.json();
-  //     // console.log(speciesJSON);
+      let species_desc = mySpecies.flavor_text.replace(/\f/g, " ");
+      species_desc = species_desc === undefined ? "N/A" : species_desc;
 
-  //     let mySpecies = speciesJSON["flavor_text_entries"].filter(
-  //       (entry) => entry.language.name === "en"
-  //     )[0];
+      let color = species.color.name;
+      color = species_desc === undefined ? "N/A" : species_desc;
 
-  //     let species_desc = mySpecies.flavor_text.replace(/\f/g, " ");
+      let double_damage = type.damage_relations.double_damage_from[0];
+      double_damage = double_damage === undefined ? "N/A" : double_damage.name;
 
-  //     let color = speciesJSON.color.name;
+      let resistance = type.damage_relations.half_damage_from[0];
+      resistance = resistance === undefined ? "N/A" : resistance.name;
 
-  //     let type = await fetch(pokemonJSON.types[0].type.url);
-  //     let typeJSON = await type.json();
-  //     // console.log(typeJSON);
-  //     let double_damage = typeJSON.damage_relations.double_damage_from[0];
-  //     double_damage = double_damage === undefined ? "" : double_damage.name;
-
-  //     let resistance = typeJSON.damage_relations.half_damage_from[0];
-  //     resistance = resistance === undefined ? "" : resistance.name;
-
-  //     setInfo({
-  //       id: pokemonJSON.id,
-  //       name: pokemonJSON.name,
-  //       hp: pokemonJSON.stats[0].base_stat,
-  //       image: pokemonJSON.sprites.front_default,
-  //       type: pokemonJSON.types[0].type.name,
-  //       height: pokemonJSON.height,
-  //       weight: pokemonJSON.weight,
-  //       ability_name: pokemonJSON.abilities[0].ability.name,
-  //       ability_desc: myAbility.effect,
-  //       move_name: pokemonJSON.moves[0].move.name,
-  //       move_desc: myMove.effect,
-  //       move_power: moveJSON.power,
-  //       species_desc: species_desc,
-  //       color: color,
-  //       double_damage: double_damage,
-  //       resistance: resistance,
-  //     });
-  //   } catch (err) {
-  //     console.log(err.message);
-  //   }
-  // }
+      setInfo({
+        id: pokemonJSON.id,
+        name: pokemonJSON.name,
+        hp: pokemonJSON.stats[0].base_stat,
+        image: pokemonJSON.sprites.front_default,
+        type: pokemonJSON.types[0].type.name,
+        height: pokemonJSON.height,
+        weight: pokemonJSON.weight,
+        ability_name: pokemonJSON.abilities[0].ability.name,
+        ability_desc: myAbility.effect,
+        move_name: pokemonJSON.moves[0].move.name,
+        move_desc: myMove.effect,
+        move_power: move.power,
+        species_desc: species_desc,
+        color: color,
+        double_damage: double_damage,
+        resistance: resistance,
+      });
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
 
   return (
     <>
       <SearchBar handleSubmit={handleSubmit} />
-      <Pagination handleClick={handleClick}>
-        <PokeCard info={info} />
-      </Pagination>
+      <PokeCard info={info} />
+      <Pagination handleClick={handleClick} />
     </>
   );
 }
