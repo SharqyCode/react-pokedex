@@ -64,7 +64,7 @@ export default function PokeCard({ info }) {
         </div>
       </div>
       <hr />
-      <p className="text-xs text-center h-[3rem] flex justify-center items-center">
+      <p className="text-xs text-center flex justify-center items-center">
         {info.species_desc}
       </p>
     </div>
