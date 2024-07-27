@@ -1,7 +1,6 @@
 import PokeCard from "./components/PokeCard";
 import Pagination from "./components/Pagination";
-import { useEffect, useRef, useState } from "react";
-import SearchBar from "./components/SearchBar";
+import { useEffect, useState } from "react";
 import NavBar from "./components/NavBar";
 function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -9,13 +8,8 @@ function App() {
   const [pokeList, setPokeList] = useState([]);
   const [idIndex, setIdIndex] = useState({});
   const [nameIndex, setNameIndex] = useState({});
+  const [error, setError] = useState(false);
   const MAX_NUM = pokeList.length;
-
-  // console.log(pokeList);
-  // console.log(MAX_NUM);
-  // console.log(nameIndex);
-  // console.log(idIndex);
-  // console.log(offsetRef);
 
   async function getList() {
     let res = await fetch(
@@ -41,8 +35,14 @@ function App() {
     setIdIndex(IdIndexDict);
   }
 
+  function handleGoHome() {
+    setCurrentIndex(0);
+    setError(false);
+
+    getData(1);
+  }
+
   useEffect(() => {
-    // getData(offsetRef.current, true);
     getList();
     getData(1); // Can we make this more dynamic?
   }, []);
@@ -129,15 +129,24 @@ function App() {
       });
     } catch (err) {
       console.log(err.message);
+      setError(true);
     }
   }
 
   return (
     <>
-      <NavBar></NavBar>
-      <SearchBar handleSubmit={handleSubmit} />
-      <PokeCard info={info} />
-      <Pagination handleClick={handleClick} />
+      <NavBar
+        handleSubmit={handleSubmit}
+        handleGoHome={handleGoHome}
+        pokeList={pokeList}
+      ></NavBar>
+      {!error ? (
+        <Pagination handleClick={handleClick}>
+          <PokeCard info={info} />
+        </Pagination>
+      ) : (
+        <h1 className="font-bold text-4xl text-center mt-64">Try Again :( </h1>
+      )}
     </>
   );
 }

@@ -3,7 +3,7 @@ export default function PokeCard({ info }) {
     return "./src/assets/types/" + name + ".png";
   }
   return (
-    <div className="mx-auto max-w-full w-[20.625rem] p-4 border-2 rounded-lg">
+    <div className="max-w-full w-[20.625rem] p-4 border-2 rounded-lg mt-8 pb-4">
       <div className="flex justify-between w-full">
         <span className="font-bold capitalize flex items-center text-2xl">
           {" "}
@@ -31,15 +31,15 @@ export default function PokeCard({ info }) {
         </span>{" "}
         {info.ability_desc}
       </p>
-      <hr className="mt-1" />
-      <div className="flex items-center ">
+      <hr className="mt-2" />
+      <div className="flex items-center mt-1">
         <p className="desc text-xs grow pr-4">
           <span className="font-bold text-sm capitalize">{info.move_name}</span>{" "}
           {info.move_desc}
         </p>
         <span className="font-bold">{info.move_power}</span>
       </div>
-      <hr className="mt-1" />
+      <hr className="mt-2" />
       <div className="flex text-center justify-between text-xs py-2">
         <div>
           weakness{" "}
