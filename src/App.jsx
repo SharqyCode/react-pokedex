@@ -58,6 +58,7 @@ function App() {
       if (newIndex !== prevIndex) {
         getData(pokeList[newIndex]);
       }
+      console.log(newIndex);
       return newIndex;
     });
   }
@@ -71,6 +72,7 @@ function App() {
   }
 
   async function getData(query) {
+    setError(false);
     try {
       let pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${query}`);
 
@@ -134,20 +136,22 @@ function App() {
   }
 
   return (
-    <>
+    <div className="">
       <NavBar
         handleSubmit={handleSubmit}
         handleGoHome={handleGoHome}
         pokeList={pokeList}
       ></NavBar>
-      {!error ? (
-        <Pagination handleClick={handleClick}>
+      <Pagination handleClick={handleClick}>
+        {!error ? (
           <PokeCard info={info} />
-        </Pagination>
-      ) : (
-        <h1 className="font-bold text-4xl text-center mt-64">Try Again :( </h1>
-      )}
-    </>
+        ) : (
+          <h1 className="font-bold text-4xl text-center mt-64">
+            Try Again :({" "}
+          </h1>
+        )}
+      </Pagination>
+    </div>
   );
 }
 

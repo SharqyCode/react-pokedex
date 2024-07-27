@@ -1,9 +1,11 @@
+import typeIcons from "../assets/typeIcons";
+
 export default function PokeCard({ info }) {
-  function getIconSrc(name) {
-    return "./src/assets/types/" + name + ".png";
+  function getIconSrc(type) {
+    return typeIcons[type];
   }
   return (
-    <div className="max-w-full w-[20.625rem] p-4 border-2 rounded-lg mt-8 pb-4">
+    <div className="max-w-full w-[20.625rem] p-4 border-2 rounded-lg pb-4 mx-4">
       <div className="flex justify-between w-full">
         <span className="font-bold capitalize flex items-center text-2xl">
           {" "}

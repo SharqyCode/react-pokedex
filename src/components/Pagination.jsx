@@ -14,7 +14,10 @@ export default function Pagination({ children, handleClick }) {
   }
 
   return (
-    <div onKeyDown={keyDown} className="flex justify-center gap-8">
+    <div
+      onKeyDown={keyDown}
+      className="flex justify-center h-[calc(100svh-3rem)] items-center p-4"
+    >
       <button
         className="hover:text-yellow-500 duration-300 focus:outline-0"
         ref={goPrev}
