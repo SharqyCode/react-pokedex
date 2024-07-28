@@ -30,7 +30,9 @@ export default function SearchBar({ handleSubmit, pokeList }) {
         className="absolute left-full"
         onClick={(e) => {
           e.preventDefault();
-          handleSubmit(text);
+          if (text !== "") {
+            handleSubmit(text);
+          }
         }}
         type="submit"
       >

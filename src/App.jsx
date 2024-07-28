@@ -48,6 +48,9 @@ function App() {
   }, []);
 
   function handleClick(direction) {
+    if (error) {
+      handleGoHome();
+    }
     setCurrentIndex((prevIndex) => {
       let newIndex = prevIndex;
       if (direction === "next") {
@@ -58,7 +61,6 @@ function App() {
       if (newIndex !== prevIndex) {
         getData(pokeList[newIndex]);
       }
-      console.log(newIndex);
       return newIndex;
     });
   }

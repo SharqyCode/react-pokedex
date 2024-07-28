@@ -1,5 +1,5 @@
 import SearchBar from "./SearchBar";
-import logo from "../../public/Pokemon.svg"
+import logo from "./../../public/Pokemon.svg";
 
 export default function NavBar({ handleSubmit, handleGoHome, pokeList }) {
   return (
